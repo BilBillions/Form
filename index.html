@@ -14,10 +14,6 @@
   </style>
 </head>
 <body>
-  <form id="pickup-form" action="https://formspree.io/f/movlblkl" method="POST">
-  <input type="hidden" name="_redirect" value="https://dbdoorstep.com/thanks">
-  <!-- other inputs here -->
-</form>
   <!-- Header -->
   <header class="site-header">
     <div class="container header-inner">
@@ -44,12 +40,8 @@
 
   <!-- Status banners -->
   <div class="container">
-    <div id="alertSuccess" class="alert alert-success is-hidden">
-      <strong>Success:</strong> Your pickup information was submitted.
-    </div>
-    <div id="alertError" class="alert alert-error is-hidden">
-      <strong>Error:</strong> Something went wrong. Please try again.
-    </div>
+    <div id="alertSuccess" class="alert alert-success is-hidden" role="alert"></div>
+    <div id="alertError" class="alert alert-error is-hidden" role="alert"></div>
   </div>
 
   <!-- Form + Aside -->
@@ -57,7 +49,18 @@
     <!-- Card: Form -->
     <section class="card">
       <h2 class="h2">Pickup Details</h2>
-      <form id="pickupForm" class="form" novalidate>
+
+      <!-- SINGLE FORM (matches form.js: id="pickupForm") -->
+      <form
+        id="pickupForm"
+        class="form"
+        method="POST"
+        action="https://formspree.io/f/movlblkl"
+        novalidate
+      >
+        <!-- Redirect after success (Formspree-native) -->
+        <input type="hidden" name="_redirect" value="https://dbdoorstep.com/thanks">
+
         <!-- Name -->
         <div class="form-group">
           <label for="fullName">Full Name</label>
@@ -71,25 +74,36 @@
             <label for="street">Street Address</label>
             <input id="street" name="street" type="text" placeholder="APT, HOUSE NUMBER, STREET NAME" required autocomplete="address-line1" class="input">
           </div>
+
           <div class="form-group">
             <label for="city">City</label>
             <input id="city" name="city" type="text" placeholder="City" required autocomplete="address-level2" class="input">
           </div>
+
           <div class="form-group">
             <label for="state">State/Province</label>
-            <input id="state" name="state" type="text" placeholder="State" required autocomplete="address-level1" class="input">
+            <input id="state" name="state" type="text" placeholder="State/Province" required autocomplete="address-level1" class="input">
           </div>
+
           <div class="form-group">
             <label for="postal">Postal Code</label>
             <input id="postal" name="postal" type="text" placeholder="ZIP / Postal" required autocomplete="postal-code" class="input">
           </div>
+
           <div class="form-group">
             <label for="country">Country</label>
             <input id="country" name="country" type="text" placeholder="Country" required autocomplete="country-name" class="input">
           </div>
+
           <div class="form-group">
             <label for="phone">Phone</label>
             <input id="phone" name="phone" type="tel" placeholder="+44 5555 555555" required autocomplete="tel" class="input">
+          </div>
+
+          <!-- Email (MISSING BEFORE; REQUIRED BY JS) -->
+          <div class="form-group grid-span-2">
+            <label for="email">Email</label>
+            <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" class="input">
           </div>
         </div>
 
@@ -126,11 +140,21 @@
     </aside>
   </main>
 
+  <!-- Thank-you Modal (used by form.js) -->
+  <div id="thankYouModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="thanksTitle">
+    <div class="modal-content">
+      <h3 id="thanksTitle" class="h3">Thank you!</h3>
+      <p>We received your pickup request. We’ll be in touch shortly.</p>
+      <button id="closeModalBtn" class="btn">Close</button>
+    </div>
+  </div>
+
   <footer class="site-footer">
     <div class="container">
       <small>© 2025 DB Doorstep Courier Services. All rights reserved.</small>
     </div>
   </footer>
+
   <script src="form.js" defer></script>
 </body>
 </html>
