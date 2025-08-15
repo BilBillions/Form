@@ -17,6 +17,60 @@ document.addEventListener("DOMContentLoaded", () => {
     statusEl.className = "status" + (isError ? " status-error" : "");
   };
 
+  // --- NEW: robust required-field validator ---
+  const requiredNames = ["fullName","street","city","state","postal","country","email","phone"];
+  const pretty = {
+    fullName: "Full name",
+    street: "Street address",
+    city: "City",
+    state: "State/Region",
+    postal: "Postal/ZIP code",
+    country: "Country",
+    email: "Email",
+    phone: "Phone"
+  };
+
+  function isFilled(nodeOrList) {
+    if (!nodeOrList) return false;
+
+    // RadioNodeList / HTMLCollection / NodeList
+    if (typeof nodeOrList.length === "number" && nodeOrList.tagName === undefined) {
+      const list = Array.from(nodeOrList);
+      if (list.length === 0) return false;
+      if (list.length === 1) return isFilled(list[0]);
+      // For groups, consider "filled" if any is checked or has a non-empty value (covers radios/checkboxes)
+      return list.some(el => el.disabled ? false :
+        el.type === "checkbox" || el.type === "radio" ? el.checked :
+        (el.value ?? "").trim() !== ""
+      );
+    }
+
+    const el = nodeOrList;
+    if (el.disabled) return true; // ignore disabled fields
+
+    if (el.type === "checkbox") return el.checked;
+    if (el.type === "radio")   return el.checked;
+
+    if (el.tagName === "SELECT") {
+      return (el.value ?? "").trim() !== "";
+    }
+
+    return (el.value ?? "").trim() !== "";
+  }
+
+  function markInvalid(elOrList, invalid = true) {
+    const set = (el) => el && el.setAttribute && (invalid
+      ? el.setAttribute("aria-invalid","true")
+      : el.removeAttribute("aria-invalid"));
+
+    if (typeof elOrList?.length === "number" && elOrList.tagName === undefined) {
+      Array.from(elOrList).forEach(set);
+    } else {
+      set(elOrList);
+    }
+  }
+  // --- end validator helpers ---
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
@@ -27,18 +81,26 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.disabled = true;
     btn.classList.add("is-loading");
 
-    // Validate required fields
-    const required = ["fullName","street","city","state","postal","country","email","phone"];
-    for (const name of required) {
-      const el = form.elements[name];
-      if (!el || !el.value.trim()) {
-        setStatus("Please complete all required fields.", true);
-        el?.focus();
+    // Validate required fields (REPLACED LOOP)
+    let firstInvalidControl = null;
+    for (const name of requiredNames) {
+      const control = form.elements.namedItem(name); // safer than elements[name]
+      const ok = isFilled(control);
+      if (!ok) {
+        // mark invalid & focus the first offending control
+        markInvalid(control, true);
+        firstInvalidControl = control?.length ? control[0] : control;
+        const label = pretty[name] || name;
+        setStatus(`Please complete: ${label}.`, true);
+        firstInvalidControl?.focus?.();
         btn.disabled = false;
         btn.classList.remove("is-loading");
         return;
+      } else {
+        markInvalid(control, false);
       }
     }
+
     // Checkbox consent
     const consentCheckbox = form.querySelector('input[type="checkbox"][required]');
     if (consentCheckbox && !consentCheckbox.checked) {
@@ -51,10 +113,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Build FormData (preferred by Formspree)
     const fd = new FormData(form);
-    // Optional: add a human-friendly subject seen in Formspree inbox
     fd.append("_subject", "New Pickup Request");
-    // Optional: where to redirect if you want (we’re using JS UI, so skip)
-    // fd.append("_redirect", "https://your-site/thanks");
+    // If you want a redirect after success, uncomment and set:
+    // fd.append("_redirect", "https://dbdoorstep.com/thanks");
 
     setStatus("Submitting…");
 
