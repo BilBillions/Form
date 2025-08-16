@@ -1,160 +1,168 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>Package Pickup Form</title>
-  <link rel="stylesheet" href="style.css">
-  <meta name="color-scheme" content="light dark">
-  <style>
-    /* Modal styles */
-    .modal { position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; }
-    .modal.is-hidden { display:none; }
-    .modal-content { background:#fff; padding:2rem; border-radius:8px; box-shadow:0 2px 16px rgba(0,0,0,0.2); text-align:center; color:#0f172a; }
-  </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>DB Doorstep | Fast & Secure Shipping</title>
+  <meta name="description" content="DB Doorstep — fast, secure worldwide deliveries with real-time tracking and reliable customer support." />
+  <link rel="icon" href="favicon.ico" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="DB Doorstep | Fast & Secure Shipping">
+  <meta property="og:description" content="Ship worldwide with confidence. Real-time tracking, reliable support, and priority delivery.">
+  <meta property="og:type" content="website">
+ <meta property="og:image" content="https://dbdoorstep.com/img/DB.webp">
+  <meta name="color-scheme" content="light">
 </head>
 <body>
-  <!-- Header -->
+
+  <!-- Page Loader -->
+  <div id="page-loader" class="page-loader" aria-hidden="true">
+    <div class="spinner" role="status" aria-label="Loading"></div>
+  </div>
+
+  <!-- Top Banner: “Open Form Page for home pickup” -->
+  <div class="top-cta">
+    <a class="back-btn" href="Form/index.html" target="_blank" rel="noopener">
+      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+      </svg>
+      Open Form Page for Home Pickup
+    </a>
+  </div>
+
+  <!-- Header / Navbar -->
   <header class="site-header">
     <div class="container header-inner">
-      <div class="brand">
+      <a href="/" class="brand" aria-label="DB Doorstep Home">
         <div class="brand-mark" aria-hidden="true"></div>
-        <span class="brand-name">DB Doorstep Courier Services</span>
-      </div>
-      <nav class="top-nav" aria-label="Main">
-        <a href="#" class="nav-link is-active">Form</a>
-        <a href="help.html" class="nav-link">Help</a>
+        <span class="brand-name">DB Doorstep</span>
+      </a>
+
+      <button id="navToggle" class="nav-toggle" aria-expanded="false" aria-controls="siteNav" aria-label="Toggle navigation">
+        <span></span><span></span><span></span>
+      </button>
+
+      <nav id="siteNav" class="top-nav" aria-label="Main">
+        <a class="nav-link is-active" href="#home">Home</a>
+        <a class="nav-link" href="services.html">Services</a>
+        <a class="nav-link" href="tracking.html">Tracking</a>
+        <a class="nav-link" href="contact.html">Contact</a>
       </nav>
     </div>
   </header>
 
   <!-- Hero -->
-  <section class="hero">
+  <section id="home" class="hero">
     <div class="container hero-inner">
       <div class="hero-copy">
-        <h1 class="h1">Package Pickup</h1>
-        <p class="muted">Enter your details so we can send our agent to pick up your package at your home and on time.</p>
+        <h1 class="h1">Delivering Worldwide with <span class="accent">Speed</span> & <span class="accent">Safety</span></h1>
+        <p class="muted">Real-time tracking, reliable support, and priority express options. Ship with confidence, anywhere.</p>
+        <div class="hero-ctas">
+          <a href="#tracking" class="btn btn-primary">Track a Package</a>
+          <a href="Form/index.html" target="_blank" class="btn btn-ghost">Home Pickup</a>
+        </div>
+      </div>
+
+      <div class="hero-art" aria-hidden="true">
+  <!-- Optional hero illustration / image -->
+  <img src="img/DB.webp" alt="Hero Illustration" style="width:100%;height:300px;object-fit:cover;border-radius:1px;box-shadow:0 8px 32px rgba(0,0,0,0.12);display:block;" />
+  </section>
+
+  <!-- Services -->
+  <section id="services" class="section">
+    <div class="container">
+      <h2 class="h2 section-title">Our Services</h2>
+
+      <div class="cards">
+        <article class="card">
+          <div class="card-icon" style="display:flex;align-items:center;justify-content:center;height:100px;overflow:hidden;">
+            <img src="img/rosebox.webp" alt="Express Shipping" aria-hidden="true" style="width:100px;height:80px;border-radius:10px;object-fit:fill;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+          </div>
+          <h3 class="h3">Express Shipping</h3>
+          <p>Time-critical delivery with priority handling and lightning-fast transit.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon" style="display:flex;align-items:center;justify-content:center;height:100px;">
+            <img src="img/istockphoto2.webp" alt="Logistics Solutions" aria-hidden="true" style="width:80px;height:80px;border-radius:16px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+          </div>
+          <h3 class="h3">Logistics Solutions</h3>
+          <p>Flexible B2B logistics tailored for your supply chain and scale.</p>
+        </article>
+
+        <article class="card">
+          <div class="card-icon" style="display:flex;align-items:center;justify-content:center;height:100px;">
+            <img src="img/mak.webp" alt="Global Tracking" aria-hidden="true" style="width:80px;height:80px;border-radius:16px;object-fit:cover;box-shadow:0 2px 12px rgba(0,0,0,0.10);">
+          </div>
+          <h3 class="h3">Global Tracking</h3>
+          <p>Real-time status from pickup to delivery — stay informed 24/7.</p>
+        </article>
       </div>
     </div>
   </section>
 
-  <!-- Status banners -->
-  <div class="container">
-    <div id="alertSuccess" class="alert alert-success is-hidden" role="alert"></div>
-    <div id="alertError" class="alert alert-error is-hidden" role="alert"></div>
-  </div>
+  <!-- Tracking -->
+  <section id="tracking" class="section section-alt">
+    <div class="container">
+      <h2 class="h2 section-title">Track Your Package</h2>
 
-  <!-- Form + Aside -->
-  <main class="container grid">
-    <!-- Card: Form -->
-    <section class="card">
-      <h2 class="h2">Pickup Details</h2>
+      <form id="trackForm" class="track-form" novalidate>
+        <label for="trackingId" class="sr-only">Tracking Number</label>
+        <input id="trackingId" name="trackingId" type="text" class="input track-input" placeholder="Enter tracking number" required>
+        <button class="btn btn-primary" type="submit">Track</button>
+      </form>
 
-      <!-- SINGLE FORM (matches form.js: id="pickupForm") -->
-      <form
-        id="pickupForm"
-        class="form"
-        method="POST"
-        action="https://formspree.io/f/movlblkl"
-        novalidate
-      >
-        <!-- Redirect after success (Formspree-native) -->
-        <input type="hidden" name="_redirect" value="https://dbdoorstep.com/thanks">
+      <p id="trackStatus" class="status mt-8" role="status" aria-live="polite"></p>
+    </div>
+  </section>
 
-        <!-- Name -->
-        <div class="form-group">
-          <label for="fullName">Full Name</label>
-          <input id="fullName" name="fullName" type="text" placeholder="First Last" required autocomplete="name" class="input">
-          <small class="help">As it appears on your ID.</small>
-        </div>
+  <!-- Contact -->
+  <section id="contact" class="section">
+    <div class="container">
+      <h2 class="h2 section-title">Get in Touch</h2>
 
-        <!-- Address -->
-        <div class="grid grid-2">
-          <div class="form-group grid-span-2">
-            <label for="street">Street Address</label>
-            <input id="street" name="street" type="text" placeholder="APT, HOUSE NUMBER, STREET NAME" required autocomplete="address-line1" class="input">
-          </div>
-
+      <form id="contactForm" class="contact-form" action="https://formspree.io/f/movlblkl" method="POST" novalidate>
+        <div class="grid-2">
           <div class="form-group">
-            <label for="city">City</label>
-            <input id="city" name="city" type="text" placeholder="City" required autocomplete="address-level2" class="input">
+            <label for="name">Name</label>
+            <input id="name" name="name" class="input" type="text" placeholder="Jane Doe" required>
           </div>
-
           <div class="form-group">
-            <label for="state">State/Province</label>
-            <input id="state" name="state" type="text" placeholder="State/Province" required autocomplete="address-level1" class="input">
-          </div>
-
-          <div class="form-group">
-            <label for="postal">Postal Code</label>
-            <input id="postal" name="postal" type="text" placeholder="ZIP / Postal" required autocomplete="postal-code" class="input">
-          </div>
-
-          <div class="form-group">
-            <label for="country">Country</label>
-            <input id="country" name="country" type="text" placeholder="Country" required autocomplete="country-name" class="input">
-          </div>
-
-          <div class="form-group">
-            <label for="phone">Phone</label>
-            <input id="phone" name="phone" type="tel" placeholder="+44 5555 555555" required autocomplete="tel" class="input">
-          </div>
-
-          <!-- Email (MISSING BEFORE; REQUIRED BY JS) -->
-          <div class="form-group grid-span-2">
             <label for="email">Email</label>
-            <input id="email" name="email" type="email" placeholder="you@example.com" required autocomplete="email" class="input">
+            <input id="email" name="email" class="input" type="email" placeholder="you@example.com" required>
           </div>
         </div>
 
-        <!-- Notes -->
         <div class="form-group">
-          <label for="notes">Pickup Notes (optional)</label>
-          <textarea id="notes" name="notes" rows="3" placeholder="Gate code, preferred time, etc." class="input"></textarea>
+          <label for="message">Message</label>
+          <textarea id="message" name="message" class="input" rows="4" placeholder="How can we help?" required></textarea>
         </div>
 
-        <!-- Honeypot (spam protection) -->
+        <!-- Honeypot -->
         <input type="text" name="_gotcha" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
 
-        <!-- Consent -->
-        <label class="checkbox">
-          <input type="checkbox" id="consent" name="consent" required>
-          <span>I confirm these details are correct.</span>
-        </label>
-
-        <!-- Actions -->
         <div class="actions">
-          <button id="submitBtn" type="submit" class="btn btn-primary">Submit</button>
-          <span id="formStatus" class="status" aria-live="polite"></span>
+          <button id="contactBtn" class="btn btn-primary" type="submit">Send Message</button>
+          <span id="contactStatus" class="status"></span>
         </div>
       </form>
-    </section>
-
-    <!-- Card: Reassurance -->
-    <aside class="card">
-      <h3 class="h3">What happens next?</h3>
-      <p class="muted">After submission, our team verifies your address and schedules pickup. You’ll receive a confirmation email with your pickup details.</p>
-      <div class="divider"></div>
-      <h3 class="h3">Privacy</h3>
-      <p class="muted">We only use your details for pickup. No spam, ever.</p>
-    </aside>
-  </main>
-
-  <!-- Thank-you Modal (used by form.js) -->
-  <div id="thankYouModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="thanksTitle">
-    <div class="modal-content">
-      <h3 id="thanksTitle" class="h3">Thank you!</h3>
-      <p>We received your pickup request. We’ll be in touch shortly.</p>
-      <button id="closeModalBtn" class="btn">Close</button>
     </div>
-  </div>
+  </section>
 
+  <!-- Footer -->
   <footer class="site-footer">
-    <div class="container">
-      <small>© 2025 DB Doorstep Courier Services. All rights reserved.</small>
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span class="brand-name">DB Doorstep</span>
+      </div>
+      <p class="fine">© 2025 DB Doorstep Courier Services. All rights reserved.</p>
     </div>
   </footer>
 
-  <script src="form.js" defer></script>
+  <!-- Scripts -->
+  <script src="index.js"></script>
 </body>
 </html>
