@@ -1,168 +1,159 @@
-// form.js
+// 👇 Replace with your real Formspree endpoint
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/movlblkl";
 
-document.addEventListener("DOMContentLoaded", () => {
-  const form = document.getElementById("pickupForm");
-  const statusEl = document.getElementById("formStatus");
-  const btn = document.getElementById("submitBtn");
-  const alertSuccess = document.getElementById("alertSuccess");
-  const alertError = document.getElementById("alertError");
-  const thankYouModal = document.getElementById("thankYouModal");
-  const closeModalBtn = document.getElementById("closeModalBtn");
+const form = document.getElementById("pickupForm");
+const statusEl = document.getElementById("formStatus");
+const btn = document.getElementById("submitBtn");
 
-  if (!form || !btn || !statusEl) return; // safety
+const cashFields = document.getElementById("cashFields");
+const cashAmount = document.getElementById("cashAmount");
+const currencySel = document.getElementById("currency");
 
-  const setStatus = (msg, isError = false) => {
-    statusEl.textContent = msg || "";
-    statusEl.className = "status" + (isError ? " status-error" : "");
-  };
+const otherFields = document.getElementById("otherFields");
+const otherDescription = document.getElementById("otherDescription");
 
-  // --- NEW: robust required-field validator ---
-  const requiredNames = ["fullName","street","city","state","postal","country","email","phone"];
-  const pretty = {
-    fullName: "Full name",
-    street: "Street address",
-    city: "City",
-    state: "State/Region",
-    postal: "Postal/ZIP code",
-    country: "Country",
-    email: "Email",
-    phone: "Phone"
-  };
+const thankYouModal = document.getElementById("thankYouModal");
+const closeModalBtn = document.getElementById("closeModalBtn");
 
-  function isFilled(nodeOrList) {
-    if (!nodeOrList) return false;
+// Toggle helpers
+function setRequired(el, isRequired) {
+  if (!el) return;
+  if (isRequired) {
+    el.setAttribute("required", "required");
+  } else {
+    el.removeAttribute("required");
+  }
+}
 
-    // RadioNodeList / HTMLCollection / NodeList
-    if (typeof nodeOrList.length === "number" && nodeOrList.tagName === undefined) {
-      const list = Array.from(nodeOrList);
-      if (list.length === 0) return false;
-      if (list.length === 1) return isFilled(list[0]);
-      // For groups, consider "filled" if any is checked or has a non-empty value (covers radios/checkboxes)
-      return list.some(el => el.disabled ? false :
-        el.type === "checkbox" || el.type === "radio" ? el.checked :
-        (el.value ?? "").trim() !== ""
-      );
-    }
+function show(el) { el && el.classList.remove("is-hidden"); }
+function hide(el) { el && el.classList.add("is-hidden"); }
 
-    const el = nodeOrList;
-    if (el.disabled) return true; // ignore disabled fields
-
-    if (el.type === "checkbox") return el.checked;
-    if (el.type === "radio")   return el.checked;
-
-    if (el.tagName === "SELECT") {
-      return (el.value ?? "").trim() !== "";
-    }
-
-    return (el.value ?? "").trim() !== "";
+// Handle pickup type change
+function handlePickupTypeChange(value) {
+  if (value === "cash") {
+    show(cashFields);
+    setRequired(cashAmount, true);
+  } else {
+    hide(cashFields);
+    setRequired(cashAmount, false);
+    if (cashAmount) cashAmount.value = "";
   }
 
-  function markInvalid(elOrList, invalid = true) {
-    const set = (el) => el && el.setAttribute && (invalid
-      ? el.setAttribute("aria-invalid","true")
-      : el.removeAttribute("aria-invalid"));
-
-    if (typeof elOrList?.length === "number" && elOrList.tagName === undefined) {
-      Array.from(elOrList).forEach(set);
-    } else {
-      set(elOrList);
-    }
+  if (value === "other") {
+    show(otherFields);
+    setRequired(otherDescription, true);
+  } else {
+    hide(otherFields);
+    setRequired(otherDescription, false);
+    if (otherDescription) otherDescription.value = "";
   }
-  // --- end validator helpers ---
+}
 
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+// Init radio listeners
+document.querySelectorAll('input[name="pickupType"]').forEach(r => {
+  r.addEventListener("change", (e) => handlePickupTypeChange(e.target.value));
+});
 
-    // Reset UI
-    alertSuccess.classList.add("is-hidden");
-    alertError.classList.add("is-hidden");
-    setStatus("");
-    btn.disabled = true;
-    btn.classList.add("is-loading");
+// Default state based on the checked radio
+const initialType = (document.querySelector('input[name="pickupType"]:checked') || {}).value || "package";
+handlePickupTypeChange(initialType);
 
-    // Validate required fields (REPLACED LOOP)
-    let firstInvalidControl = null;
-    for (const name of requiredNames) {
-      const control = form.elements.namedItem(name); // safer than elements[name]
-      const ok = isFilled(control);
-      if (!ok) {
-        // mark invalid & focus the first offending control
-        markInvalid(control, true);
-        firstInvalidControl = control?.length ? control[0] : control;
-        const label = pretty[name] || name;
-        setStatus(`Please complete: ${label}.`, true);
-        firstInvalidControl?.focus?.();
-        btn.disabled = false;
-        btn.classList.remove("is-loading");
-        return;
-      } else {
-        markInvalid(control, false);
-      }
-    }
+// Submit handler
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  statusEl.textContent = "";
+  btn.disabled = true;
+  btn.classList.add("is-loading");
 
-    // Checkbox consent
-    const consentCheckbox = form.querySelector('input[type="checkbox"][required]');
-    if (consentCheckbox && !consentCheckbox.checked) {
-      setStatus("Please confirm your details are correct.", true);
-      consentCheckbox.focus();
+  // Required base fields
+  const required = ["fullName","street","city","state","postal","country","phone","consent"];
+  for (const name of required) {
+    const el = form.elements[name];
+    if (!el || (el.type === "checkbox" ? !el.checked : !String(el.value).trim())) {
+      statusEl.textContent = "Please complete all required fields.";
+      statusEl.className = "status status-error";
+      if (el && el.focus) el.focus();
       btn.disabled = false;
       btn.classList.remove("is-loading");
       return;
     }
+  }
 
-    // Build FormData (preferred by Formspree)
-    const fd = new FormData(form);
-    fd.append("_subject", "New Pickup Request");
-    // If you want a redirect after success, uncomment and set:
-    // fd.append("_redirect", "https://dbdoorstep.com/thanks");
-
-    setStatus("Submitting…");
-
-    try {
-      const resp = await fetch(FORMSPREE_ENDPOINT, {
-        method: "POST",
-        headers: { "Accept": "application/json" }, // don't set Content-Type for FormData
-        body: fd
-      });
-
-      const data = await resp.json().catch(() => ({}));
-      if (resp.ok) {
-        form.reset();
-        setStatus("");
-        alertSuccess.innerHTML = "<strong>Thank you:</strong> your pickup information was submitted.";
-        alertSuccess.classList.remove("is-hidden");
-
-        const original = btn.textContent;
-        btn.textContent = "Thank you";
-        setTimeout(() => (btn.textContent = original), 2000);
-
-        thankYouModal?.classList.remove("is-hidden");
-        closeModalBtn?.focus();
-      } else {
-        // Surface helpful errors from Formspree
-        let msg = "Error: Please try again.";
-        if (data?.errors?.length) msg = data.errors.map(e => e.message).join(" ");
-        if (data?.error) msg = data.error;
-        alertError.textContent = msg;
-        alertError.classList.remove("is-hidden");
-        setStatus("", true);
-      }
-    } catch {
-      alertError.textContent = "Network error. Please try again.";
-      alertError.classList.remove("is-hidden");
-      setStatus("", true);
-    } finally {
+  // Pickup type specifics
+  const pickupType = (form.querySelector('input[name="pickupType"]:checked') || {}).value || "package";
+  if (pickupType === "cash") {
+    const amt = parseFloat(cashAmount.value);
+    if (!(amt >= 0)) {
+      statusEl.textContent = "Please enter a valid cash amount.";
+      statusEl.className = "status status-error";
+      cashAmount.focus();
       btn.disabled = false;
       btn.classList.remove("is-loading");
+      return;
     }
-  });
+  }
+  if (pickupType === "other" && !otherDescription.value.trim()) {
+    statusEl.textContent = "Please describe the item for pickup.";
+    statusEl.className = "status status-error";
+    otherDescription.focus();
+    btn.disabled = false;
+    btn.classList.remove("is-loading");
+    return;
+  }
 
-  // Modal handlers
-  closeModalBtn?.addEventListener("click", () => {
-    thankYouModal?.classList.add("is-hidden");
-  });
-  thankYouModal?.addEventListener("click", (e) => {
-    if (e.target === thankYouModal) thankYouModal.classList.add("is-hidden");
-  });
+  // Build payload for Formspree
+  const payload = {
+    fullName: form.fullName.value.trim(),
+    street: form.street.value.trim(),
+    city: form.city.value.trim(),
+    state: form.state.value.trim(),
+    postal: form.postal.value.trim(),
+    country: form.country.value.trim(),
+    phone: form.phone.value.trim(),
+    pickupType,
+    currency: pickupType === "cash" ? currencySel.value : "",
+    cashAmount: pickupType === "cash" ? cashAmount.value : "",
+    otherDescription: pickupType === "other" ? otherDescription.value.trim() : "",
+    weight: form.weight.value.trim(),
+    preferredTime: form.preferredTime.value.trim(),
+    notes: form.notes.value.trim(),
+    _gotcha: form._gotcha.value || ""
+  };
+
+  try {
+    const resp = await fetch(FORMSPREE_ENDPOINT, {
+      method: "POST",
+      headers: { "Accept": "application/json", "Content-Type": "application/json" },
+      body: JSON.stringify(payload)
+    });
+
+    if (resp.ok) {
+      form.reset();
+      // Reset dynamic sections after reset
+      handlePickupTypeChange("package");
+      statusEl.textContent = "";
+      statusEl.className = "status";
+      // Show thank-you modal
+      thankYouModal.classList.remove("is-hidden");
+    } else {
+      statusEl.textContent = "Something went wrong. Please try again.";
+      statusEl.className = "status status-error";
+    }
+  } catch (err) {
+    statusEl.textContent = "Network error. Please try again.";
+    statusEl.className = "status status-error";
+  } finally {
+    btn.disabled = false;
+    btn.classList.remove("is-loading");
+  }
+});
+
+// Close modal
+closeModalBtn.addEventListener("click", () => {
+  thankYouModal.classList.add("is-hidden");
+});
+
+// Also close modal when clicking outside the dialog
+thankYouModal.addEventListener("click", (e) => {
+  if (e.target === thankYouModal) thankYouModal.classList.add("is-hidden");
 });
