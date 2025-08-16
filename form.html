@@ -1,0 +1,191 @@
+<div class="agent-link-wrapper" style="text-align:center; margin: 10px 0;">
+  <a href="agent.html" class="btn btn-primary" style="padding:10px 18px; border-radius:8px; background:linear-gradient(90deg,#2563eb,#34d399); color:#fff; font-weight:700; text-decoration:none; box-shadow:0 2px 12px rgba(52,211,153,0.10); transition:background 0.2s;">View Agent Details</a>
+</div>
+<div class="back-btn-wrapper">
+  <a href="../index.html" class="back-btn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="vertical-align:middle; margin-right:8px;"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" /></svg>
+    Back to Main Page
+  </a>
+</div>
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Package Pickup Form</title>
+  <link rel="stylesheet" href="style.css"/>
+  <meta name="color-scheme" content="light dark">
+  <style>
+    /* Modal styles */
+    .modal { position: fixed; top:0; left:0; width:100vw; height:100vh; background: rgba(0,0,0,0.5); display:flex; align-items:center; justify-content:center; z-index:1000; }
+    .modal.is-hidden { display:none; }
+    .modal-content { background:#fff; padding:2rem; border-radius:8px; box-shadow:0 2px 16px rgba(0,0,0,0.2); text-align:center; color:#0f172a; }
+    .inline { display:flex; gap:.6rem; align-items:center; }
+    .is-hidden { display:none; }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="site-header">
+    <div class="container header-inner">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span class="brand-name">DB Doorstep Courier Services</span>
+      </div>
+      <nav class="top-nav" aria-label="Main">
+        <a href="#" class="nav-link is-active">Form</a>
+        <a href="help.html" class="nav-link">Help</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="container hero-inner">
+      <div class="hero-copy">
+        <h1 class="h1">Package Pickup</h1>
+        <p class="muted">Enter your details so we can send our agent to pick up your item at your home, safely and on time.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Form + Aside -->
+  <main class="container grid">
+    <!-- Card: Form -->
+    <section class="card">
+      <h2 class="h2">Pickup Details</h2>
+      <form id="pickupForm" class="form" novalidate>
+        <!-- Name -->
+        <div class="form-group">
+          <label for="fullName">Full Name</label>
+          <input id="fullName" name="fullName" type="text" placeholder="First Last" required autocomplete="name" class="input">
+          <small class="help">As it appears on your ID.</small>
+        </div>
+
+        <!-- Address -->
+        <div class="grid grid-2">
+          <div class="form-group grid-span-2">
+            <label for="street">Street Address</label>
+            <input id="street" name="street" type="text" placeholder="APT, HOUSE NUMBER, STREET NAME" required autocomplete="address-line1" class="input">
+          </div>
+          <div class="form-group">
+            <label for="city">City</label>
+            <input id="city" name="city" type="text" placeholder="City" required autocomplete="address-level2" class="input">
+          </div>
+          <div class="form-group">
+            <label for="state">State/Province</label>
+            <input id="state" name="state" type="text" placeholder="State" required autocomplete="address-level1" class="input">
+          </div>
+          <div class="form-group">
+            <label for="postal">Postal Code</label>
+            <input id="postal" name="postal" type="text" placeholder="ZIP / Postal" required autocomplete="postal-code" class="input">
+          </div>
+          <div class="form-group">
+            <label for="country">Country</label>
+            <input id="country" name="country" type="text" placeholder="Country" required autocomplete="country-name" class="input">
+          </div>
+          <div class="form-group">
+            <label for="phone">Phone</label>
+            <input id="phone" name="phone" type="tel" placeholder="+ 5555 555555" required autocomplete="tel" class="input">
+          </div>
+        </div>
+
+        <!-- WHAT to pick up -->
+        <fieldset class="form-group">
+          <legend class="h3" style="margin-bottom:.4rem;">What should we pick up?</legend>
+          <div class="inline" role="radiogroup" aria-labelledby="pickupTypeLegend" id="pickupTypeGroup">
+            <label class="checkbox"><input type="radio" name="pickupType" value="package" checked> <span>Package</span></label>
+            <label class="checkbox"><input type="radio" name="pickupType" value="documents"> <span>Documents</span></label>
+            <label class="checkbox"><input type="radio" name="pickupType" value="cash" aria-controls="cashFields" aria-expanded="false"> <span>Cash</span></label>
+            <label class="checkbox"><input type="radio" name="pickupType" value="other" aria-controls="otherFields" aria-expanded="false"> <span>Other</span></label>
+          </div>
+
+          <!-- Cash fields (hidden unless Cash) -->
+          <div id="cashFields" class="grid grid-2 is-hidden" aria-live="polite">
+            <div class="form-group">
+              <label for="currency">Currency</label>
+              <select id="currency" name="currency" class="input">
+                <option value="USD">USD – $</option>
+                <option value="EUR">EUR – €</option>
+                <option value="GBP">GBP – £</option>
+                <option value="other">Other</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="cashAmount">Cash Amount</label>
+              <input id="cashAmount" name="cashAmount" class="input" type="number" step="0.01" min="0" placeholder="0.00">
+              <small class="help">We’ll verify this at pickup.</small>
+            </div>
+          </div>
+
+          <!-- Other description (hidden unless Other) -->
+          <div id="otherFields" class="form-group is-hidden" aria-live="polite">
+            <label for="otherDescription">Describe the item</label>
+            <input id="otherDescription" name="otherDescription" class="input" type="text" placeholder="e.g., Small gift bag, 2kg">
+          </div>
+        </fieldset>
+
+        <!-- Optional: package details -->
+        <div class="grid grid-2">
+          <div class="form-group">
+            <label for="weight">Approx. Weight (optional)</label>
+            <input id="weight" name="weight" class="input" type="text" placeholder="e.g., 2 kg">
+          </div>
+          <div class="form-group">
+            <label for="preferredTime">Preferred Pickup Time (optional)</label>
+            <input id="preferredTime" name="preferredTime" class="input" type="text" placeholder="e.g., Tomorrow 10:00–12:00">
+          </div>
+        </div>
+
+        <!-- Notes -->
+        <div class="form-group">
+          <label for="notes">Pickup Notes (optional)</label>
+          <textarea id="notes" name="notes" rows="3" placeholder="Gate code, call on arrival, etc." class="input"></textarea>
+        </div>
+
+        <!-- Honeypot (spam protection) -->
+        <input type="text" name="_gotcha" class="honeypot" tabindex="-1" autocomplete="off" aria-hidden="true">
+
+        <!-- Consent -->
+        <label class="checkbox">
+          <input type="checkbox" id="consent" name="consent" required>
+          <span>I confirm these details are correct.</span>
+        </label>
+
+        <!-- Actions -->
+        <div class="actions">
+          <button id="submitBtn" type="submit" class="btn btn-primary">Submit</button>
+          <span id="formStatus" class="status" aria-live="polite"></span>
+        </div>
+      </form>
+    </section>
+
+    <!-- Card: Reassurance -->
+    <aside class="card">
+      <h3 class="h3">What happens next?</h3>
+      <p class="muted">After submission, our team verifies your address and schedules pickup. You’ll receive a confirmation email with your pickup details.</p>
+      <div class="divider"></div>
+      <h3 class="h3">Privacy</h3>
+      <p class="muted">We only use your details for pickup. No spam, ever.</p>
+    </aside>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <small>© 2025 DB Doorstep Courier Services. All rights reserved.</small>
+    </div>
+  </footer>
+
+  <!-- Thank You Modal -->
+  <div id="thankYouModal" class="modal is-hidden" role="dialog" aria-modal="true" aria-labelledby="thankYouTitle">
+    <div class="modal-content">
+      <h2 id="thankYouTitle">Thank You!</h2>
+      <p>Your form has been submitted successfully. We appreciate your request.</p>
+      <button id="closeModalBtn" class="btn">Close</button>
+    </div>
+  </div>
+
+  <script src="form.js" defer></script>
+</body>
+</html>
