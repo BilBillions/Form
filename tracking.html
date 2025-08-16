@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Track Your Package | DB Doorstep</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="brand" aria-label="DB Doorstep Home">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span class="brand-name">DB Doorstep</span>
+      </a>
+      <nav class="top-nav" aria-label="Main">
+        <a class="nav-link" href="index.html">Home</a>
+        <a class="nav-link" href="services.html">Services</a>
+        <a class="nav-link is-active" href="tracking.html">Tracking</a>
+        <a class="nav-link" href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main class="container" style="margin-top:40px;max-width:600px;">
+    <h1 class="h2">Track Your Package</h1>
+    <form id="trackForm" class="track-form" novalidate>
+      <label for="trackingId" class="sr-only">Tracking Number</label>
+      <input id="trackingId" name="trackingId" type="text" class="input track-input" placeholder="Enter tracking number" required>
+      <button class="btn btn-primary" type="submit">Track</button>
+    </form>
+    <p id="trackStatus" class="status mt-8" role="status" aria-live="polite"></p>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <div class="footer-brand">
+        <div class="brand-mark" aria-hidden="true"></div>
+        <span class="brand-name">DB Doorstep</span>
+      </div>
+      <p class="fine">© 2025 DB Doorstep Courier Services. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('trackForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      var trackingId = document.getElementById('trackingId').value.trim();
+      var status = document.getElementById('trackStatus');
+      if (!trackingId) {
+        status.textContent = 'Please enter a tracking number.';
+        status.style.color = '#f87171';
+        return;
+      }
+      // Simulate tracking lookup
+      status.textContent = 'Tracking info for #' + trackingId + ': In transit.';
+      status.style.color = '#059669';
+    });
+  </script>
+</body>
+</html>
