@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>Your Pickup Agent</title>
+  <link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+  <main class="container card" style="max-width:720px;margin:2rem auto;">
+    <h1 class="h2">Your Pickup Agent</h1>
+    <div id="error" class="alert alert-error is-hidden"></div>
+
+    <div id="agentCard" class="grid grid-2 is-hidden">
+      <div> <img id="agentPhoto" style="max-width:100%;border-radius:12px;">
+      </div>
+      <div>
+        <p><strong>Name:</strong> <span id="agentName"></span></p>
+        <p><strong>Phone:</strong> <span id="agentPhone"></span></p>
+        <p><strong>Notes:</strong> <span id="pickupNotes"></span></p>
+        <div class="divider"></div>
+        <p><strong>Address:</strong><br>
+          <span id="addrStreet"></span><br>
+          <span id="addrCity"></span>
+          <span id="addrState"></span>
+          <span id="addrPostal"></span><br>
+          <span id="addrCountry"></span>
+        </p>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = params.get("id");
+
+    const $ = (s) => document.querySelector(s);
+    const error = $("#error");
+    const card = $("#agentCard");
+
+    async function load() {
+      if (!id) {
+        error.textContent = "Missing link id.";
+        error.classList.remove("is-hidden");
+        return;
+      }
+      try {
+        const resp = await fetch(`/.netlify/functions/get-agent?id=${encodeURIComponent(id)}`);
+        if (!resp.ok) throw new Error(await resp.text());
+        const data = await resp.json();
+
+        $("#agentName").textContent = data.agent.name;
+        $("#agentPhone").textContent = data.agent.phone;
+        $("#agentPhoto").src = data.agent.photo;
+        $("#pickupNotes").textContent = data.notes || "—";
+
+        $("#addrStreet").textContent = data.address.street;
+        $("#addrCity").textContent = data.address.city;
+        $("#addrState").textContent = data.address.state;
+        $("#addrPostal").textContent = data.address.postal;
+        $("#addrCountry").textContent = data.address.country;
+
+        card.classList.remove("is-hidden");
+      } catch (e) {
+        error.textContent = "Sorry, we couldn't load your agent details.";
+        error.classList.remove("is-hidden");
+        console.error(e);
+      }
+    }
+    load();
+  </script>
+</body>
+</html>
